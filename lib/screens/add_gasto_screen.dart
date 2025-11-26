@@ -57,7 +57,7 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   items: categories.map((c) => DropdownMenuItem(value: c.id, child: Text(c.nome))).toList(),
-                  value: selectedCategoryId,
+                  initialValue: selectedCategoryId,
                   onChanged: (v) => setState(() => selectedCategoryId = v),
                   decoration: const InputDecoration(labelText: 'Categoria'),
                   validator: (v) => v == null || v.isEmpty ? 'Escolha uma categoria' : null,

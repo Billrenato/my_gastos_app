@@ -14,13 +14,20 @@ class CategoriaItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: Color(categoria.colorValue), width: 2), // Borda colorida
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: Color(categoria.colorValue),
-            radius: 10,
+            radius: 12, // Um pouco maior para destaque
+            child: Text(
+              categoria.nome[0].toUpperCase(), // Primeira letra da categoria
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(width: 12),
           Text(
@@ -28,7 +35,7 @@ class CategoriaItem extends StatelessWidget {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const Spacer(),
-          // Implementar edição/exclusão aqui se desejar
+          // Aqui você pode colocar ícones de edição ou exclusão se quiser
         ],
       ),
     );
