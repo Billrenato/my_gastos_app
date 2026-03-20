@@ -4,6 +4,8 @@ import 'package:my_gastos_app/widgets/circular_status.dart';
 import 'package:my_gastos_app/widgets/card_gasto.dart';
 import 'package:my_gastos_app/providers/gasto_provider.dart';
 import 'package:my_gastos_app/providers/categoria_provider.dart';
+import 'package:my_gastos_app/providers/theme_provider.dart';
+import 'package:my_gastos_app/providers/month_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -12,39 +14,64 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final gastosAsync = ref.watch(gastoListProvider);
     final categoriasAsync = ref.watch(categoriaListProvider);
+    final colors = Theme.of(context).colorScheme;
+    final selectedMonth = ref.watch(selectedMonthProvider);
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
+
+            
             // 🔹 Top container (igual ao seu)
             Container(
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  
+
+                  colors: [
+                    colors.primary,
+                    colors.primaryContainer,
+                  ],
+                ),
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(36),
                   bottomRight: Radius.circular(36),
                 ),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 6,
-                      offset: Offset(0, 2)),
+                    color: Colors.black12,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
                 ],
               ),
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // 🌙 ESQUERDA
+                      IconButton(
+                        icon: const Icon(Icons.dark_mode),
+                        onPressed: () {
+                          final current = ref.read(themeProvider);
+
+                          ref.read(themeProvider.notifier).state =
+                              current == ThemeMode.dark
+                                  ? ThemeMode.light
+                                  : ThemeMode.dark;
+                        },
+                      ),
+
+                      // ⚙️ DIREITA
                       IconButton(
                         icon: const Icon(Icons.settings),
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/categories'),
                       ),
-                      const SizedBox(width: 8),
                     ],
                   ),
                   const CircularStatus(),
@@ -65,10 +92,21 @@ class HomeScreen extends ConsumerWidget {
                 data: (categorias) {
                   return gastosAsync.when(
                     data: (gastos) {
+                      final gastosFiltrados = gastos.where((g) {
+                        final isMesmoMes =
+                            g.data.month == selectedMonth.month &&
+                            g.data.year == selectedMonth.year;
+
+                        final isRecorrente = g.recorrente &&
+                            g.data.isBefore(DateTime(selectedMonth.year, selectedMonth.month + 1));
+
+                        return isMesmoMes || isRecorrente;
+                      }).toList();
+
                       return ListView(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         children: [
-                          for (var gasto in gastos)
+                          for (var gasto in gastosFiltrados)
                             CardGasto(
                               gasto: gasto,
                               categoria: categorias.firstWhere(
@@ -89,7 +127,7 @@ class HomeScreen extends ConsumerWidget {
                               child: Container(
                                 height: 55,
                                 decoration: BoxDecoration(
-                                  color: Colors.green.shade300,
+                                  color: Theme.of(context).colorScheme.primary,
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: const Center(

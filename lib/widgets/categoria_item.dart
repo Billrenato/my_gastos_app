@@ -3,40 +3,53 @@ import 'package:my_gastos_app/models/categoria.dart';
 
 class CategoriaItem extends StatelessWidget {
   final Categoria categoria;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
-  const CategoriaItem({super.key, required this.categoria});
+  const CategoriaItem({
+    super.key,
+    required this.categoria,
+    this.onEdit,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: Color(categoria.colorValue), width: 2), // Borda colorida
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Color(categoria.colorValue),
-            radius: 12, // Um pouco maior para destaque
-            child: Text(
-              categoria.nome[0].toUpperCase(), // Primeira letra da categoria
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
+    final color = Color(categoria.colorValue);
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color.withOpacity(0.2),
+          child: Icon(
+            Icons.label,
+            color: color,
+          ),
+        ),
+        title: Text(
+          categoria.nome,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.edit,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: onEdit,
             ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            categoria.nome,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          const Spacer(),
-          // Aqui você pode colocar ícones de edição ou exclusão se quiser
-        ],
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Theme.of(context).colorScheme.error,
+              ),
+              onPressed: onDelete,
+            ),
+          ],
+        ),
       ),
     );
   }
