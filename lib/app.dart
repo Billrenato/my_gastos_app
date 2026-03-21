@@ -18,20 +18,20 @@ class MyApp extends ConsumerWidget {
 
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3D59A1),
+          seedColor: const Color(0xFF18181B), // 🔥 preto/cinza
           brightness: Brightness.light,
         ),
-        scaffoldBackgroundColor: const Color(0xFFF0F2F6),
+        scaffoldBackgroundColor: const Color(0xFFFAFAFA), // 🔥 mais clean
         useMaterial3: true,
       ),
 
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7AA2F7),
+          seedColor: const Color(0xFFE5E7EB), // 🔥 branco suave
           brightness: Brightness.dark,
-          surface: const Color(0xFF1A1B26),
+          surface: const Color(0xFF18181B), // 🔥 card mais bonito
         ),
-        scaffoldBackgroundColor: const Color(0xFF16161E),
+        scaffoldBackgroundColor: const Color(0xFF09090B), // 🔥 preto premium
         useMaterial3: true,
       ),
 
