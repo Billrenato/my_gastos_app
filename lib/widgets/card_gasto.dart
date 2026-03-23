@@ -137,7 +137,7 @@ class CardGasto extends ConsumerWidget {
                 "R\$ ${gasto.valor.toStringAsFixed(2)}",
                 style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: colors.primary,
+                  color: colors.onSurface,
                 ),
               )
             ],

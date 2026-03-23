@@ -99,7 +99,7 @@ class CircularStatus extends ConsumerWidget {
                   return PieChartSectionData(
                     value: e.value,
                     color: Color(cat.colorValue),
-                    radius: 35,
+                    radius: 30,
                     title: "${percent.toStringAsFixed(0)}%",
                     titleStyle: TextStyle(
                       fontSize: 10,
@@ -119,7 +119,7 @@ class CircularStatus extends ConsumerWidget {
                           PieChart(
                             PieChartData(
                               sections: sections,
-                              centerSpaceRadius: 60,
+                              centerSpaceRadius: 65,
                             ),
                           ),
                           Column(
@@ -131,6 +131,7 @@ class CircularStatus extends ConsumerWidget {
                                     .textTheme
                                     .titleLarge
                                     ?.copyWith(
+                                      fontSize: 12, // 🔥 diminui aqui (testa 14, 16, 18)
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),

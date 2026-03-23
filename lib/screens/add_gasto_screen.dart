@@ -72,12 +72,20 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
               children: [
                 TextFormField(
                   controller: _tituloCtrl,
-                  decoration: const InputDecoration(labelText: 'Título'),
+                  decoration: InputDecoration(
+                    labelText: 'Título',
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                  ),
                   validator: (v) => (v == null || v.trim().isEmpty) ? 'Preencha o título' : null,
                 ),
                 TextFormField(
                   controller: _valorCtrl,
-                  decoration: const InputDecoration(labelText: 'Valor'),
+                  decoration: InputDecoration(
+                    labelText: 'Valor',
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                  ),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   validator: (v) {
                     final parsed = double.tryParse(v?.replaceAll(',', '.') ?? '');
@@ -88,6 +96,7 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<String>(
+                  dropdownColor: Theme.of(context).colorScheme.surface,
                   value: selectedCategoryId,
                   items: categories.map((c) => DropdownMenuItem(
                     value: c.id,
@@ -98,7 +107,11 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
                       selectedCategoryId = v; // Atualiza o estado local para o "Salvar" usar
                     });
                   },
-                  decoration: const InputDecoration(labelText: 'Categoria'),
+                  decoration: InputDecoration(
+                    labelText: 'Categoria',
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                  ),
                   validator: (v) => v == null ? 'Escolha uma categoria' : null,
                 ),
 
@@ -108,6 +121,14 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
                     Text('Data: ${_data.day}/${_data.month}/${_data.year}'),
                     const Spacer(),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                       onPressed: () async {
                         final picked = await showDatePicker(
                           context: context,

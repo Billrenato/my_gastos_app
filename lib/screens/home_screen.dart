@@ -21,72 +21,84 @@ class HomeScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-
-            
-            // 🔹 Top container (igual ao seu)
+            // 🔥 HEADER PREMIUM
             Container(
               width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  
-
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   colors: [
                     colors.primary,
-                    colors.primaryContainer,
+                    colors.primary.withOpacity(0.7),
                   ],
                 ),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(36),
                   bottomRight: Radius.circular(36),
                 ),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
+                    color: colors.primary.withOpacity(0.25),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
-              padding: const EdgeInsets.symmetric(vertical: 24),
               child: Column(
                 children: [
+                  // 🔹 TOPO
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // 🌙 ESQUERDA
                       IconButton(
-                        icon: const Icon(Icons.dark_mode),
+                        icon: Icon(
+                          Icons.dark_mode,
+                          color: colors.onPrimary,
+                        ),
                         onPressed: () {
                           final current = ref.read(themeProvider);
-
                           ref.read(themeProvider.notifier).state =
                               current == ThemeMode.dark
                                   ? ThemeMode.light
                                   : ThemeMode.dark;
                         },
                       ),
-
-                      // ⚙️ DIREITA
                       IconButton(
-                        icon: const Icon(Icons.settings),
+                        icon: Icon(
+                          Icons.settings,
+                          color: colors.onPrimary,
+                        ),
                         onPressed: () =>
                             Navigator.of(context).pushNamed('/categories'),
                       ),
                     ],
                   ),
+
+                  const SizedBox(height: 10),
+
+                  // 🔵 GRÁFICO
                   const CircularStatus(),
-                  const SizedBox(height: 12),
-                  const Text(
+
+                  const SizedBox(height: 16),
+
+                  // 🔤 TEXTO
+                  Text(
                     'Resumo mensal',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: colors.onPrimary,
+                    ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // 🔹 Lista final (gastos + categorias juntos)
+            // 🔹 LISTA
             Expanded(
               child: categoriasAsync.when(
                 data: (categorias) {
@@ -98,46 +110,47 @@ class HomeScreen extends ConsumerWidget {
                             g.data.year == selectedMonth.year;
 
                         final isRecorrente = g.recorrente &&
-                            g.data.isBefore(DateTime(selectedMonth.year, selectedMonth.month + 1));
+                            g.data.isBefore(
+                              DateTime(
+                                selectedMonth.year,
+                                selectedMonth.month + 1,
+                              ),
+                            );
 
                         return isMesmoMes || isRecorrente;
                       }).toList();
 
-                      return ListView(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        children: [
-                          for (var gasto in gastosFiltrados)
-                            CardGasto(
-                              gasto: gasto,
-                              categoria: categorias.firstWhere(
-                                (c) => c.id == gasto.categoriaId,
-                                orElse: () => categorias.first,
-                              ),
-                            ),
-
-                          const SizedBox(height: 12),
-
-                          // 🔹 Botão de adicionar
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 8),
-                            child: GestureDetector(
-                              onTap: () =>
-                                  Navigator.of(context).pushNamed('/add'),
-                              child: Container(
-                                height: 55,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: const Center(
-                                  child: Icon(Icons.add,
-                                      size: 30, color: Colors.white),
-                                ),
-                              ),
+                      if (gastosFiltrados.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'Nenhum gasto encontrado',
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
                             ),
                           ),
-                        ],
+                        );
+                      }
+
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        itemCount: gastosFiltrados.length,
+                        itemBuilder: (context, index) {
+                          final gasto = gastosFiltrados[index];
+
+                          final categoria = categorias.firstWhere(
+                            (c) => c.id == gasto.categoriaId,
+                            orElse: () => categorias.first,
+                          );
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                            child: CardGasto(
+                              gasto: gasto,
+                              categoria: categoria,
+                            ),
+                          );
+                        },
                       );
                     },
                     loading: () =>
@@ -145,7 +158,8 @@ class HomeScreen extends ConsumerWidget {
                     error: (e, st) => Center(child: Text('Erro: $e')),
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () =>
+                    const Center(child: CircularProgressIndicator()),
                 error: (e, st) => Center(child: Text('Erro: $e')),
               ),
             ),
@@ -153,9 +167,13 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
 
-      // 🔹 Bottom navigation
+      // 🔥 NAVBAR BONITA
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
+        backgroundColor: colors.surface,
+        selectedItemColor: colors.primary,
+        unselectedItemColor: colors.onSurfaceVariant,
+        elevation: 8,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(
@@ -169,8 +187,11 @@ class HomeScreen extends ConsumerWidget {
         },
       ),
 
-      // 🔹 Botão flutuante
+      // 🔥 FAB PREMIUM
       floatingActionButton: FloatingActionButton(
+        backgroundColor: colors.primary,
+        foregroundColor: colors.onPrimary,
+        elevation: 4,
         onPressed: () => Navigator.of(context).pushNamed('/add'),
         child: const Icon(Icons.add),
       ),
