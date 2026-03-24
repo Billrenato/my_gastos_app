@@ -10,96 +10,144 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
 
+    // 🎨 PALETA CINZA (igual da imagem)
+    const lightBg = Color(0xFFF2F2F2);
+    const lightCard = Color(0xFFFFFFFF);
+    const lightText = Color(0xFF5D5E61);
+    const lightBorder = Color(0xFFE0E0E0);
+
+    const darkBg = Color(0xFF1A1A1C);
+    const darkCard = Color(0xFF2A2A2D);
+    const darkText = Color(0xFFC6C6C9);
+    const darkBorder = Color(0xFF3A3A3D);
+
     return MaterialApp(
       title: 'MyGastos',
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
 
-      // 🌞 LIGHT — SaaS Clean
+      // 🌞 LIGHT — Minimalista Cinza
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
+        scaffoldBackgroundColor: lightBg,
 
-        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-
-        colorScheme: const ColorScheme(
-          brightness: Brightness.light,
-          primary: Color(0xFF2563EB), // azul SaaS moderno
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF5D5E61),
           onPrimary: Colors.white,
-          secondary: Color(0xFF10B981), // verde financeiro
+
+          secondary: Color(0xFF8E8E93),
           onSecondary: Colors.white,
-          error: Colors.red,
-          onError: Colors.white,
-          surface: Colors.white,
-          onSurface: Color(0xFF0F172A),
+
+          surface: lightCard,
+          onSurface: lightText,
+
+          outline: lightBorder,
         ),
 
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          foregroundColor: Color(0xFF0F172A),
+          backgroundColor: lightBg,
+          foregroundColor: lightText,
           elevation: 0,
+          scrolledUnderElevation: 0,
           centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: lightText,
+          ),
         ),
 
         cardTheme: CardThemeData(
-          color: Colors.white,
+          color: lightCard,
           elevation: 0,
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Color(0xFFE2E8F0)),
+            borderRadius: BorderRadius.circular(14),
+            side: const BorderSide(color: lightBorder),
           ),
         ),
 
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF2563EB),
+          backgroundColor: Color(0xFF5D5E61),
           foregroundColor: Colors.white,
+          elevation: 2,
         ),
 
-        dividerColor: const Color(0xFFE2E8F0),
+        dividerTheme: const DividerThemeData(
+          color: lightBorder,
+          thickness: 1,
+        ),
+
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: lightText, fontSize: 14),
+          titleMedium: TextStyle(
+            color: lightText,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
 
-      // 🌙 DARK — SaaS Premium
+      // 🌙 DARK — Minimalista Cinza Premium
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
+        scaffoldBackgroundColor: darkBg,
 
-        scaffoldBackgroundColor: const Color(0xFF020617),
+        colorScheme: const ColorScheme.dark(
+          primary: darkText,
+          onPrimary: darkBg,
 
-        colorScheme: const ColorScheme(
-          brightness: Brightness.dark,
-          primary: Color(0xFF3B82F6),
-          onPrimary: Colors.white,
-          secondary: Color(0xFF22C55E),
+          secondary: Color(0xFF9A9A9D),
           onSecondary: Colors.black,
-          error: Colors.red,
-          onError: Colors.white,
-          surface: Color(0xFF0F172A),
-          onSurface: Color(0xFFE2E8F0),
+
+          surface: darkCard,
+          onSurface: darkText,
+
+          outline: darkBorder,
         ),
 
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
+          backgroundColor: darkBg,
+          foregroundColor: darkText,
           elevation: 0,
+          scrolledUnderElevation: 0,
           centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: darkText,
+          ),
         ),
 
         cardTheme: CardThemeData(
-          color: const Color(0xFF0F172A),
+          color: darkCard,
           elevation: 0,
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Color(0xFF1E293B)),
+            borderRadius: BorderRadius.circular(14),
+            side: const BorderSide(color: darkBorder),
           ),
         ),
 
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF3B82F6),
-          foregroundColor: Colors.white,
+          backgroundColor: darkText,
+          foregroundColor: darkBg,
+          elevation: 3,
         ),
 
-        dividerColor: const Color(0xFF1E293B),
+        dividerTheme: const DividerThemeData(
+          color: darkBorder,
+          thickness: 1,
+        ),
+
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: darkText, fontSize: 14),
+          titleMedium: TextStyle(
+            color: darkText,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
 
       initialRoute: Routes.home,

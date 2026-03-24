@@ -24,21 +24,25 @@ class CategoriaNotifier
       var list = box.values.toList();
 
       if (list.isEmpty) {
+        // Agora as categorias iniciais já nascem com ícones profissionais
         final categoriasIniciais = [
           Categoria(
             id: const Uuid().v4(),
             nome: 'Alimentação',
-            colorValue: const Color.fromARGB(255, 90, 255, 241).value,
+            colorValue: const Color(0xFF10B981).value, // Verde elegante (saudável / positivo)
+            iconCode: Icons.restaurant.codePoint,
           ),
           Categoria(
             id: const Uuid().v4(),
             nome: 'Transporte',
-            colorValue: const Color.fromARGB(255, 255, 108, 108).value,
+            colorValue: const Color(0xFF3B82F6).value, // Azul moderno (movimento)
+            iconCode: Icons.directions_car.codePoint,
           ),
           Categoria(
             id: const Uuid().v4(),
             nome: 'Assinaturas',
-            colorValue: const Color.fromARGB(255, 126, 178, 238).value,
+            colorValue: const Color(0xFF8B5CF6).value, // Roxo fintech (recorrente / tech)
+            iconCode: Icons.bolt.codePoint,
           ),
         ];
 
@@ -63,6 +67,7 @@ class CategoriaNotifier
       final box = HiveService.categoriasBoxInstance();
       await box.put(c.id, c);
 
+      // Atualiza o estado com a lista nova do banco
       state = AsyncValue.data(box.values.toList());
     } catch (e, st) {
       state = AsyncValue.error(e, st);

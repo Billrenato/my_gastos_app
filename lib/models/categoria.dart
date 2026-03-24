@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
-part 'categoria.g.dart'; // NECESSITA DE build_runner
+import 'package:flutter/material.dart'; // Importante para o Icons.category
+
+part 'categoria.g.dart'; 
 
 @HiveType(typeId: 1)
 class Categoria extends HiveObject {
@@ -12,5 +14,13 @@ class Categoria extends HiveObject {
   @HiveField(2)
   int colorValue;
 
-  Categoria({required this.id, required this.nome, required this.colorValue});
+  @HiveField(3) // Novo campo para o ícone
+  int iconCode;
+
+  Categoria({
+    required this.id, 
+    required this.nome, 
+    required this.colorValue,
+    this.iconCode = 0xe141, // 0xe141 é o código padrão do Icons.category
+  });
 }

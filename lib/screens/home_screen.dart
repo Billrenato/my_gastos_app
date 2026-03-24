@@ -93,13 +93,20 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
+                  Text(
+                    'Resumo mensal',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colors.onPrimary.withOpacity(0.8),
+                    ),
+                  ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
                   // 🔵 GRÁFICO
                   const CircularStatus(),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
 
                   // 💰 BLOCO DE SALDO (NOVO)
                   gastosAsync.when(
@@ -130,7 +137,7 @@ class HomeScreen extends ConsumerWidget {
                           Text(
                             'Saldo atual',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color:
                                   colors.onPrimary.withOpacity(0.7),
                             ),
@@ -139,11 +146,11 @@ class HomeScreen extends ConsumerWidget {
                           Text(
                             "R\$ ${saldo.toStringAsFixed(2).replaceAll('.', ',')}",
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: saldo >= 0
-                                  ? Colors.greenAccent
-                                  : Colors.redAccent,
+                                  ? Color(0xFF4CAF50) // verde material padrão
+                                  : Color(0xFFF44336), // vermelho material padrão
                             ),
                           ),
                         ],
@@ -155,13 +162,7 @@ class HomeScreen extends ConsumerWidget {
 
                   const SizedBox(height: 10),
 
-                  Text(
-                    'Resumo mensal',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colors.onPrimary.withOpacity(0.8),
-                    ),
-                  ),
+                  
                 ],
               ),
             ),

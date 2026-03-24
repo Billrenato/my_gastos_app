@@ -20,19 +20,22 @@ class CategoriaAdapter extends TypeAdapter<Categoria> {
       id: fields[0] as String,
       nome: fields[1] as String,
       colorValue: fields[2] as int,
+      iconCode: fields[3] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Categoria obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.nome)
       ..writeByte(2)
-      ..write(obj.colorValue);
+      ..write(obj.colorValue)
+      ..writeByte(3)
+      ..write(obj.iconCode);
   }
 
   @override

@@ -28,7 +28,7 @@ class CardGasto extends ConsumerWidget {
       key: Key(gasto.id),
       direction: DismissDirection.endToStart,
 
-      // 🔥 BACKGROUND MELHORADO
+      // 🔥 BACKGROUND DE EXCLUSÃO
       background: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         padding: const EdgeInsets.only(right: 20),
@@ -37,7 +37,7 @@ class CardGasto extends ConsumerWidget {
           color: colors.error,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(Icons.delete, color: colors.onError),
+        child: Icon(Icons.delete_outline, color: colors.onError),
       ),
 
       confirmDismiss: (_) async {
@@ -72,15 +72,17 @@ class CardGasto extends ConsumerWidget {
             .read(gastoListProvider.notifier)
             .removeGasto(gasto.id);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Gasto excluído'),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Gasto excluído'),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-          ),
-        );
+          );
+        }
       },
 
       child: GestureDetector(
@@ -91,15 +93,12 @@ class CardGasto extends ConsumerWidget {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           padding: const EdgeInsets.all(16),
-
           decoration: BoxDecoration(
             color: colors.surface,
             borderRadius: BorderRadius.circular(16),
-
             border: Border.all(
               color: colors.outline.withOpacity(0.1),
             ),
-
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.04),
@@ -108,10 +107,9 @@ class CardGasto extends ConsumerWidget {
               ),
             ],
           ),
-
           child: Row(
             children: [
-              // 🎨 CATEGORIA (mais elegante)
+              // 🎨 CATEGORIA COM ÍCONE DINÂMICO
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -119,18 +117,20 @@ class CardGasto extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  Icons.label,
+                  // AQUI ESTÁ A CORREÇÃO:
+                  IconData(categoria.iconCode, fontFamily: 'MaterialIcons'),
                   color: categoriaColor,
-                  size: 20,
+                  size: 22, // Aumentei levemente para destaque
                 ),
               ),
 
               const SizedBox(width: 14),
 
-              // 🧾 INFO
+              // 🧾 INFORMAÇÕES DO GASTO
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       gasto.titulo,
@@ -141,9 +141,7 @@ class CardGasto extends ConsumerWidget {
                         letterSpacing: -0.2,
                       ),
                     ),
-
-                    const SizedBox(height: 6),
-
+                    const SizedBox(height: 4),
                     Text(
                       "${df.format(gasto.data)} • ${categoria.nome}",
                       style: textTheme.bodySmall?.copyWith(
@@ -156,7 +154,7 @@ class CardGasto extends ConsumerWidget {
 
               const SizedBox(width: 10),
 
-              // 💰 VALOR (com destaque melhor)
+              // 💰 VALOR FORMATADO
               Text(
                 "R\$ ${gasto.valor.toStringAsFixed(2).replaceAll('.', ',')}",
                 style: textTheme.titleMedium?.copyWith(

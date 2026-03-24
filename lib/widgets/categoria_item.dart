@@ -16,36 +16,48 @@ class CategoriaItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Color(categoria.colorValue);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      elevation: 0, // Menos sombra para um look mais clean e moderno
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.5)),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.2),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15), // Fundo suave baseado na cor da categoria
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Icon(
-            Icons.label,
+            // AQUI ESTÁ A MUDANÇA PRINCIPAL:
+            IconData(categoria.iconCode, fontFamily: 'MaterialIcons'),
             color: color,
+            size: 24,
           ),
         ),
         title: Text(
           categoria.nome,
-          style: Theme.of(context).textTheme.titleMedium,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              tooltip: 'Editar',
+              icon: Icon(Icons.edit_outlined, color: colorScheme.primary),
               onPressed: onEdit,
             ),
             IconButton(
-              icon: Icon(
-                Icons.delete,
-                color: Theme.of(context).colorScheme.error,
-              ),
+              tooltip: 'Excluir',
+              icon: Icon(Icons.delete_outline, color: colorScheme.error),
               onPressed: onDelete,
             ),
           ],
