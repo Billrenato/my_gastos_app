@@ -28,17 +28,17 @@ class CategoriaNotifier
           Categoria(
             id: const Uuid().v4(),
             nome: 'Alimentação',
-            colorValue: const Color(0xFF22C55E).value,
+            colorValue: const Color.fromARGB(255, 90, 255, 241).value,
           ),
           Categoria(
             id: const Uuid().v4(),
             nome: 'Transporte',
-            colorValue: const Color(0xFF3B82F6).value,
+            colorValue: const Color.fromARGB(255, 255, 108, 108).value,
           ),
           Categoria(
             id: const Uuid().v4(),
             nome: 'Assinaturas',
-            colorValue: const Color(0xFF8B5CF6).value,
+            colorValue: const Color.fromARGB(255, 126, 178, 238).value,
           ),
         ];
 

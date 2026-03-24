@@ -28,25 +28,25 @@ class CardGasto extends ConsumerWidget {
       key: Key(gasto.id),
       direction: DismissDirection.endToStart,
 
-      // 🔥 BACKGROUND COM TEMA
+      // 🔥 BACKGROUND MELHORADO
       background: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         padding: const EdgeInsets.only(right: 20),
         alignment: Alignment.centerRight,
         decoration: BoxDecoration(
           color: colors.error,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(
-          Icons.delete,
-          color: colors.onError,
-        ),
+        child: Icon(Icons.delete, color: colors.onError),
       ),
 
-      // 🔥 CONFIRMAÇÃO (PROFISSIONAL)
       confirmDismiss: (_) async {
         return await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             title: const Text('Excluir gasto'),
             content: const Text('Deseja realmente excluir este gasto?'),
             actions: [
@@ -55,6 +55,10 @@ class CardGasto extends ConsumerWidget {
                 child: const Text('Cancelar'),
               ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.error,
+                  foregroundColor: colors.onError,
+                ),
                 onPressed: () => Navigator.pop(ctx, true),
                 child: const Text('Excluir'),
               ),
@@ -68,9 +72,14 @@ class CardGasto extends ConsumerWidget {
             .read(gastoListProvider.notifier)
             .removeGasto(gasto.id);
 
-        // 🔥 feedback
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gasto excluído')),
+          SnackBar(
+            content: const Text('Gasto excluído'),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         );
       },
 
@@ -81,32 +90,42 @@ class CardGasto extends ConsumerWidget {
 
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
 
           decoration: BoxDecoration(
-            color: colors.surface, // 🔥 TEMA
+            color: colors.surface,
             borderRadius: BorderRadius.circular(16),
+
+            border: Border.all(
+              color: colors.outline.withOpacity(0.1),
+            ),
 
             boxShadow: [
               BoxShadow(
-                color: colors.shadow.withOpacity(0.1),
-                blurRadius: 10,
-              )
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
             ],
           ),
 
           child: Row(
             children: [
-              // 🎨 CATEGORIA
-              CircleAvatar(
-                backgroundColor: categoriaColor.withOpacity(0.2),
+              // 🎨 CATEGORIA (mais elegante)
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: categoriaColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Icon(
                   Icons.label,
                   color: categoriaColor,
+                  size: 20,
                 ),
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
 
               // 🧾 INFO
               Expanded(
@@ -115,12 +134,15 @@ class CardGasto extends ConsumerWidget {
                   children: [
                     Text(
                       gasto.titulo,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.2,
                       ),
                     ),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
 
                     Text(
                       "${df.format(gasto.data)} • ${categoria.nome}",
@@ -132,14 +154,16 @@ class CardGasto extends ConsumerWidget {
                 ),
               ),
 
-              // 💰 VALOR
+              const SizedBox(width: 10),
+
+              // 💰 VALOR (com destaque melhor)
               Text(
-                "R\$ ${gasto.valor.toStringAsFixed(2)}",
+                "R\$ ${gasto.valor.toStringAsFixed(2).replaceAll('.', ',')}",
                 style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: colors.onSurface,
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -15,90 +15,91 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
 
-      // 🌞 LIGHT THEME (branco gelo moderno)
+      // 🌞 LIGHT — SaaS Clean
       theme: ThemeData(
-        brightness: Brightness.light,
         useMaterial3: true,
+        brightness: Brightness.light,
 
-        scaffoldBackgroundColor: const Color(0xFFFAFAFA), // ❄️ branco gelo
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
 
         colorScheme: const ColorScheme(
           brightness: Brightness.light,
-
-          primary: Color(0xFFE5E7EB), // ❄️ cinza gelo MUITO leve
-          onPrimary: Color(0xFF18181B),
-
-          secondary: Color(0xFFF1F5F9), // ❄️ quase branco
-          onSecondary: Color(0xFF18181B),
-
-          background: Color(0xFFFAFAFA),
-          onBackground: Color(0xFF18181B),
-
-          surface: Color(0xFFFFFFFF), // cards brancos
-          onSurface: Color(0xFF18181B),
-
-          onSurfaceVariant: Color(0xFF71717A), // texto secundário leve
-
+          primary: Color(0xFF2563EB), // azul SaaS moderno
+          onPrimary: Colors.white,
+          secondary: Color(0xFF10B981), // verde financeiro
+          onSecondary: Colors.white,
           error: Colors.red,
           onError: Colors.white,
+          surface: Colors.white,
+          onSurface: Color(0xFF0F172A),
         ),
-
-        cardColor: Colors.white,
-
-        dividerColor: const Color(0xFFF1F5F9), // ❄️ quase invisível
 
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
+          foregroundColor: Color(0xFF0F172A),
           elevation: 0,
-          foregroundColor: Color(0xFF18181B),
+          centerTitle: true,
+        ),
+
+        cardTheme: CardThemeData(
+          color: Colors.white,
+          elevation: 0,
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFFE2E8F0)),
+          ),
         ),
 
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFFE5E7EB), // ❄️ botão gelo
-          foregroundColor: Color(0xFF18181B),
+          backgroundColor: Color(0xFF2563EB),
+          foregroundColor: Colors.white,
         ),
+
+        dividerColor: const Color(0xFFE2E8F0),
       ),
 
-      // 🌙 DARK THEME (preto premium)
+      // 🌙 DARK — SaaS Premium
       darkTheme: ThemeData(
-        brightness: Brightness.dark,
         useMaterial3: true,
+        brightness: Brightness.dark,
 
-        scaffoldBackgroundColor: const Color(0xFF09090B),
+        scaffoldBackgroundColor: const Color(0xFF020617),
 
         colorScheme: const ColorScheme(
           brightness: Brightness.dark,
-          primary: Color(0xFF27272A),
+          primary: Color(0xFF3B82F6),
           onPrimary: Colors.white,
-
-          secondary: Color(0xFF3F3F46),
-          onSecondary: Colors.white,
-
-          background: Color(0xFF09090B),
-          onBackground: Colors.white,
-
-          surface: Color(0xFF18181B),
-
-          onSurface: Color(0xFFF4F4F5),        // 🔥 MAIS FORTE
-          onSurfaceVariant: Color(0xFFD4D4D8), // 🔥 RESOLVE O CINZA APAGADO
-
+          secondary: Color(0xFF22C55E),
+          onSecondary: Colors.black,
           error: Colors.red,
           onError: Colors.white,
+          surface: Color(0xFF0F172A),
+          onSurface: Color(0xFFE2E8F0),
         ),
-
-        cardColor: const Color(0xFF18181B),
-        dividerColor: const Color(0xFF27272A),
 
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          foregroundColor: Colors.white,
+          centerTitle: true,
+        ),
+
+        cardTheme: CardThemeData(
+          color: const Color(0xFF0F172A),
+          elevation: 0,
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFF1E293B)),
+          ),
         ),
 
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF27272A),
+          backgroundColor: Color(0xFF3B82F6),
           foregroundColor: Colors.white,
         ),
+
+        dividerColor: const Color(0xFF1E293B),
       ),
 
       initialRoute: Routes.home,

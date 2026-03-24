@@ -23,9 +23,6 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
     super.dispose();
   }
 
-  // ========================
-  // 🟢 ADICIONAR
-  // ========================
   void _showAddDialog() {
     _nameController.clear();
     _selectedColorValue = AppColors.availableColors.first.value;
@@ -48,9 +45,6 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
     );
   }
 
-  // ========================
-  // ✏️ EDITAR
-  // ========================
   void _showEditDialog(Categoria categoria) {
     _nameController.text = categoria.nome;
     _selectedColorValue = categoria.colorValue;
@@ -71,10 +65,9 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
     );
   }
 
-  // ========================
-  // 🗑️ EXCLUIR
-  // ========================
   Future<void> _deleteCategoria(String id) async {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -83,9 +76,13 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text('Cancelar', style: TextStyle(color: colorScheme.primary)),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Excluir'),
           ),
@@ -94,15 +91,10 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
     );
 
     if (confirm == true) {
-      await ref
-          .read(categoriaListProvider.notifier)
-          .deleteCategoria(id);
+      await ref.read(categoriaListProvider.notifier).deleteCategoria(id);
     }
   }
 
-  // ========================
-  // 🔥 DIALOG PADRÃO
-  // ========================
   void _showDialog({
     required String title,
     required Future<void> Function() onSave,
@@ -110,68 +102,93 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
     showDialog(
       context: context,
       builder: (ctx) {
+        final colorScheme = Theme.of(ctx).colorScheme;
+        
         return StatefulBuilder(
           builder: (context, setStateSB) {
             return AlertDialog(
-              title: Text(title),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nome da Categoria',
+              title: Text(title, style: TextStyle(color: colorScheme.onSurface)),
+              content: SingleChildScrollView( // Evita erro de overflow em telas menores
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _nameController,
+                      style: TextStyle(color: colorScheme.onSurface),
+                      decoration: InputDecoration(
+                        labelText: 'Nome da Categoria',
+                        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                        filled: true,
+                        fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Cor Selecionada:',
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: AppColors.availableColors.map((color) {
+                        final isSelected = color.value == _selectedColorValue;
 
-                  Text(
-                    'Cor:',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: AppColors.availableColors.map((color) {
-                      final isSelected =
-                          color.value == _selectedColorValue;
-
-                      return GestureDetector(
-                        onTap: () {
-                          setStateSB(() {
-                            _selectedColorValue = color.value;
-                          });
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: color,
-                          radius: isSelected ? 18 : 14,
-                          child: isSelected
-                              ? Icon(
-                                  Icons.check,
-                                  size: 16,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimary,
-                                )
-                              : null,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                        return GestureDetector(
+                          onTap: () {
+                            setStateSB(() {
+                              _selectedColorValue = color.value;
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected ? colorScheme.primary : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              backgroundColor: color,
+                              radius: 16,
+                              child: isSelected
+                                  ? Icon(
+                                      Icons.check,
+                                      size: 18,
+                                      // Logica para o check ser branco ou preto dependendo da cor de fundo
+                                      color: ThemeData.estimateBrightnessForColor(color) == Brightness.dark 
+                                          ? Colors.white 
+                                          : Colors.black87,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Cancelar'),
+                  child: Text('Cancelar', style: TextStyle(color: colorScheme.primary)),
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
                   onPressed: () async {
                     await onSave();
-                    Navigator.pop(ctx);
+                    if (context.mounted) Navigator.pop(ctx);
                   },
                   child: const Text('Salvar'),
                 ),
@@ -183,12 +200,10 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
     );
   }
 
-  // ========================
-  // UI
-  // ========================
   @override
   Widget build(BuildContext context) {
     final categoriasAsync = ref.watch(categoriaListProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -200,13 +215,14 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
             return Center(
               child: Text(
                 'Nenhuma categoria cadastrada',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
               ),
             );
           }
 
           return ListView.builder(
             itemCount: categorias.length,
+            padding: const EdgeInsets.symmetric(vertical: 8),
             itemBuilder: (ctx, i) {
               final categoria = categorias[i];
 
@@ -218,12 +234,13 @@ class _CategoriasScreenState extends ConsumerState<CategoriasScreen> {
             },
           );
         },
-        loading: () =>
-            const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Erro: $e')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, st) => Center(child: Text('Erro: $e', style: TextStyle(color: colorScheme.error))),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddDialog,
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         child: const Icon(Icons.add),
       ),
     );

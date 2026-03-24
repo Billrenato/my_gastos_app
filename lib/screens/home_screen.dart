@@ -6,6 +6,7 @@ import 'package:my_gastos_app/providers/gasto_provider.dart';
 import 'package:my_gastos_app/providers/categoria_provider.dart';
 import 'package:my_gastos_app/providers/theme_provider.dart';
 import 'package:my_gastos_app/providers/month_provider.dart';
+import 'package:my_gastos_app/providers/renda_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -16,6 +17,8 @@ class HomeScreen extends ConsumerWidget {
     final categoriasAsync = ref.watch(categoriaListProvider);
     final colors = Theme.of(context).colorScheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
+    final themeMode = ref.watch(themeProvider);
+    final renda = ref.watch(rendaProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -54,24 +57,39 @@ class HomeScreen extends ConsumerWidget {
                     children: [
                       IconButton(
                         icon: Icon(
-                          Icons.dark_mode,
+                          themeMode == ThemeMode.dark
+                              ? Icons.light_mode
+                              : Icons.dark_mode,
                           color: colors.onPrimary,
                         ),
                         onPressed: () {
-                          final current = ref.read(themeProvider);
-                          ref.read(themeProvider.notifier).state =
-                              current == ThemeMode.dark
+                          final nextMode =
+                              themeMode == ThemeMode.dark
                                   ? ThemeMode.light
                                   : ThemeMode.dark;
+
+                          ref
+                              .read(themeProvider.notifier)
+                              .setTheme(nextMode);
                         },
                       ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.settings,
-                          color: colors.onPrimary,
-                        ),
-                        onPressed: () =>
-                            Navigator.of(context).pushNamed('/categories'),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.attach_money,
+                                color: colors.onPrimary),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed('/renda');
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.settings,
+                                color: colors.onPrimary),
+                            onPressed: () => Navigator.of(context)
+                                .pushNamed('/categories'),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -83,13 +101,65 @@ class HomeScreen extends ConsumerWidget {
 
                   const SizedBox(height: 16),
 
-                  // 🔤 TEXTO
+                  // 💰 BLOCO DE SALDO (NOVO)
+                  gastosAsync.when(
+                    data: (gastos) {
+                      final gastosFiltrados = gastos.where((g) {
+                        final isMesmoMes =
+                            g.data.month == selectedMonth.month &&
+                            g.data.year == selectedMonth.year;
+
+                        final isRecorrente = g.recorrente &&
+                            g.data.isBefore(
+                              DateTime(
+                                selectedMonth.year,
+                                selectedMonth.month + 1,
+                              ),
+                            );
+
+                        return isMesmoMes || isRecorrente;
+                      }).toList();
+
+                      final totalGastos = gastosFiltrados.fold(
+                          0.0, (sum, g) => sum + g.valor);
+
+                      final saldo = renda - totalGastos;
+
+                      return Column(
+                        children: [
+                          Text(
+                            'Saldo atual',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color:
+                                  colors.onPrimary.withOpacity(0.7),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "R\$ ${saldo.toStringAsFixed(2).replaceAll('.', ',')}",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: saldo >= 0
+                                  ? Colors.greenAccent
+                                  : Colors.redAccent,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    loading: () => const SizedBox(),
+                    error: (_, __) => const SizedBox(),
+                  ),
+
+                  const SizedBox(height: 10),
+
                   Text(
                     'Resumo mensal',
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: colors.onPrimary,
+                      fontSize: 14,
+                      color: colors.onPrimary.withOpacity(0.8),
                     ),
                   ),
                 ],
@@ -132,7 +202,8 @@ class HomeScreen extends ConsumerWidget {
                       }
 
                       return ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 8),
                         itemCount: gastosFiltrados.length,
                         itemBuilder: (context, index) {
                           final gasto = gastosFiltrados[index];
@@ -153,21 +224,23 @@ class HomeScreen extends ConsumerWidget {
                         },
                       );
                     },
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (e, st) => Center(child: Text('Erro: $e')),
+                    loading: () => const Center(
+                        child: CircularProgressIndicator()),
+                    error: (e, st) =>
+                        Center(child: Text('Erro: $e')),
                   );
                 },
-                loading: () =>
-                    const Center(child: CircularProgressIndicator()),
-                error: (e, st) => Center(child: Text('Erro: $e')),
+                loading: () => const Center(
+                    child: CircularProgressIndicator()),
+                error: (e, st) =>
+                    Center(child: Text('Erro: $e')),
               ),
             ),
           ],
         ),
       ),
 
-      // 🔥 NAVBAR BONITA
+      // 🔥 NAVBAR
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         backgroundColor: colors.surface,
@@ -175,24 +248,30 @@ class HomeScreen extends ConsumerWidget {
         unselectedItemColor: colors.onSurfaceVariant,
         elevation: 8,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month), label: 'Calendário'),
+              icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.pie_chart), label: 'Relatórios'),
+              icon: Icon(Icons.calendar_month),
+              label: 'Calendário'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.pie_chart),
+              label: 'Relatórios'),
         ],
         onTap: (i) {
-          if (i == 1) Navigator.of(context).pushNamed('/calendar');
-          if (i == 2) Navigator.of(context).pushNamed('/reports');
+          if (i == 1)
+            Navigator.of(context).pushNamed('/calendar');
+          if (i == 2)
+            Navigator.of(context).pushNamed('/reports');
         },
       ),
 
-      // 🔥 FAB PREMIUM
+      // 🔥 FAB
       floatingActionButton: FloatingActionButton(
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
         elevation: 4,
-        onPressed: () => Navigator.of(context).pushNamed('/add'),
+        onPressed: () =>
+            Navigator.of(context).pushNamed('/add'),
         child: const Icon(Icons.add),
       ),
     );

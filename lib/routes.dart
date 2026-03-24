@@ -4,6 +4,7 @@ import 'package:my_gastos_app/screens/add_gasto_screen.dart';
 import 'package:my_gastos_app/screens/calendario_screen.dart';
 import 'package:my_gastos_app/screens/relatorios_screen.dart';
 import 'package:my_gastos_app/screens/categorias_screen.dart';
+import 'package:my_gastos_app/screens/renda_screen.dart';
 
 class Routes {
   static const home = '/';
@@ -11,6 +12,7 @@ class Routes {
   static const calendar = '/calendar';
   static const reports = '/reports';
   static const categories = '/categories';
+  static const renda = '/renda';
 
   static final routes = <String, WidgetBuilder>{
     home: (ctx) => const HomeScreen(),
@@ -18,5 +20,6 @@ class Routes {
     calendar: (ctx) => const CalendarioScreen(),
     reports: (ctx) => const RelatoriosScreen(),
     categories: (ctx) => const CategoriasScreen(),
+    renda: (ctx) => const RendaScreen(),
   };
 }

@@ -21,7 +21,7 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
   String? selectedCategoryId;
   bool isRecorrente = false;
   Gasto? gastoEditando;
-  bool _isInitialized = false; // 🔥 CORREÇÃO 1: Impede resetar os dados ao reconstruir
+  bool _isInitialized = false;
 
   @override
   void dispose() {
@@ -34,7 +34,6 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     
-    // Só carrega os argumentos uma vez
     if (!_isInitialized) {
       final args = ModalRoute.of(context)?.settings.arguments;
       if (args != null && args is Gasto) {
@@ -52,6 +51,8 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
   @override
   Widget build(BuildContext context) {
     final categoriasAsync = ref.watch(categoriaListProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -59,32 +60,41 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
       ),
       body: categoriasAsync.when(
         data: (categories) {
-          // 🔥 CORREÇÃO 2: Garante que o selectedCategoryId seja válido dentro das categorias existentes
           if (selectedCategoryId != null && !categories.any((c) => c.id == selectedCategoryId)) {
-             // Se a categoria do gasto não existe mais, limpa ou reseta
-             selectedCategoryId = null; 
+            selectedCategoryId = null; 
           }
 
           return Form(
             key: _formKey,
-            child: ListView( // Melhor que Column para evitar erro de overflow com teclado
+            child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                // CAMPO TÍTULO
                 TextFormField(
                   controller: _tituloCtrl,
+                  style: TextStyle(color: colorScheme.onSurface),
                   decoration: InputDecoration(
                     labelText: 'Título',
+                    labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   validator: (v) => (v == null || v.trim().isEmpty) ? 'Preencha o título' : null,
                 ),
+                const SizedBox(height: 16),
+
+                // CAMPO VALOR
                 TextFormField(
                   controller: _valorCtrl,
+                  style: TextStyle(color: colorScheme.onSurface),
                   decoration: InputDecoration(
                     labelText: 'Valor',
+                    labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                    prefixText: 'R\$ ',
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   validator: (v) {
@@ -93,75 +103,99 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
+                // DROPDOWN CATEGORIA
                 DropdownButtonFormField<String>(
-                  dropdownColor: Theme.of(context).colorScheme.surface,
+                  dropdownColor: colorScheme.surface,
                   value: selectedCategoryId,
+                  style: TextStyle(color: colorScheme.onSurface),
                   items: categories.map((c) => DropdownMenuItem(
                     value: c.id,
                     child: Text(c.nome),
                   )).toList(),
-                  onChanged: (v) {
-                    setState(() {
-                      selectedCategoryId = v; // Atualiza o estado local para o "Salvar" usar
-                    });
-                  },
+                  onChanged: (v) => setState(() => selectedCategoryId = v),
                   decoration: InputDecoration(
                     labelText: 'Categoria',
+                    labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   validator: (v) => v == null ? 'Escolha uma categoria' : null,
                 ),
 
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Text('Data: ${_data.day}/${_data.month}/${_data.year}'),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                const SizedBox(height: 16),
+
+                // SELEÇÃO DE DATA
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceVariant.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: colorScheme.primary),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Data: ${_data.day}/${_data.month}/${_data.year}',
+                        style: TextStyle(color: colorScheme.onSurface, fontSize: 16),
                       ),
-                      onPressed: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: _data,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (picked != null) setState(() => _data = picked);
-                      },
-                      child: const Text('Selecionar'),
-                    )
-                  ],
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _data,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) setState(() => _data = picked);
+                        },
+                        child: const Text('ALTERAR'),
+                      )
+                    ],
+                  ),
                 ),
+
+                const SizedBox(height: 8),
+
+                // CHECKBOX RECORRENTE
                 CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
                   value: isRecorrente,
                   onChanged: (v) => setState(() => isRecorrente = v ?? false),
-                  title: const Text('Recorrente (mensal)'),
+                  title: Text('Recorrente (mensal)', 
+                    style: TextStyle(color: colorScheme.onSurface)),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: colorScheme.primary,
                 ),
-                const SizedBox(height: 30),
+
+                const SizedBox(height: 32),
                 
+                // BOTÃO SALVAR (ESTILIZADO)
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    minimumSize: const Size(double.infinity, 56), // Botão largo e alto
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 2,
+                  ),
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
 
                     final value = double.tryParse(_valorCtrl.text.replaceAll(',', '.')) ?? 0;
 
-                    // 🔥 CORREÇÃO 3: Criar um NOVO objeto com os dados ATUALIZADOS da tela
                     final gastoParaSalvar = Gasto(
                       id: gastoEditando?.id ?? const Uuid().v4(),
                       titulo: _tituloCtrl.text,
                       valor: value,
                       data: _data,
-                      categoriaId: selectedCategoryId!, // O valor vindo do setState
+                      categoriaId: selectedCategoryId!,
                       recorrente: isRecorrente,
                     );
 
@@ -173,14 +207,17 @@ class _AddGastoScreenState extends ConsumerState<AddGastoScreen> {
 
                     if (mounted) Navigator.pop(context);
                   },
-                  child: Text(gastoEditando == null ? 'Salvar' : 'Atualizar'),
+                  child: Text(
+                    gastoEditando == null ? 'SALVAR GASTO' : 'ATUALIZAR GASTO',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 )
               ],
             ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Erro: $e')),
+        error: (e, st) => Center(child: Text('Erro: $e', style: TextStyle(color: colorScheme.error))),
       ),
     );
   }
